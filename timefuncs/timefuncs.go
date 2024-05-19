@@ -22,6 +22,5 @@ func FormatDuration(d time.Duration) string {
 	return fmt.Sprintf("%02.0f:%02d:%02d",
 		rounder(d.Hours()),
 		int(math.Abs(d.Minutes()))%60,
-		int(math.Abs(d.Seconds()))%60,
-		int(math.Abs(float64(d.Nanoseconds()/1e6)))%1000)
+		int(math.Abs(d.Seconds()))%60)
 }
