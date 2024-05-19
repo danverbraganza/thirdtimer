@@ -1,0 +1,78 @@
+body,html {
+    min-width: 120px;
+    font-family: sans-serif;
+    height: 100%;
+    margin:  0px auto;
+    background: lightblue;
+}
+
+#wrapper {
+    background: white;
+    position: relative;
+    min-width: 120px;
+    max-width: 600px;
+    margin: 0px auto;
+    height: auto;
+    padding: 10px;
+    min-height: 100%;
+    content-align: center;
+}
+
+
+h1 {
+    padding: 10px;
+    margin: 0px auto;
+    font-style: italic;
+}
+
+.copy {
+    font-weight: bold;
+    font-size: larger;
+}
+
+#display {
+    margin: 0px 10px;
+    line-height: 2;
+}
+
+.cost {
+    font-size: 28px;
+}
+
+.bigCost {
+    font-size: 48px;
+    align: right;
+}
+
+
+#totalTime {
+    background: inherit;
+    font-size: 28px;
+    text-align: center;
+    width: 50%;
+}
+
+input[type=number] {
+    width: 100px;
+}
+
+.subHeading {
+    margin: 10px;
+    line-height: 2;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    opacity: 1;
+}
+
+.chooser tr:nth-child(2n+1) {
+    background: #eee;
+}
+
+.control {
+    font-size: larger;
+    padding: 8px;
+    margin: 12px;
+    min-width: 200px;
+}
