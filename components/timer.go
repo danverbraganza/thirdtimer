@@ -70,7 +70,11 @@ func (t *Timer) StartBreak() {
 		for t.breaking {
 			<-fps30
 			now := time.Now()
+			wasPos := t.breakingDuration > 0
 			t.breakingDuration -= now.Sub(t.last)
+			if wasPos && 0 > t.breakingDuration {
+				notify("Break is over!")
+			}
 			t.last = now
 			mithril.Redraw(false)
 		}
@@ -85,6 +89,19 @@ func (t *Timer) BigBreak() {
 	t.breaking = false
 	t.workingDuration = 0
 	t.breakingDuration = 0
+}
+
+func requestPermission() {
+	if js.Global.Get("Notification").Get("permission").String() != "granted" {
+		js.Global.Get("Notification").Call("requestPermission").Invoke(func(permission string) {})
+	}
+}
+
+func notify(body string) {
+	options := map[string]interface{}{
+		"body": body,
+	}
+	js.Global.Get("Notification").New("Break ended", options)
 }
 
 func (*Timer) View(ctrl moria.Controller) moria.View {
@@ -162,6 +179,7 @@ func (*Timer) View(ctrl moria.Controller) moria.View {
 				m("button#startBreak.control", js.M{
 					"config": mithril.RouteConfig,
 					"onclick": func() {
+						requestPermission()
 						t.StartBreak()
 					},
 					"disabled": t.breaking,
