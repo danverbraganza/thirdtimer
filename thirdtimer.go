@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	myTimer := &components.Timer{}
+	myTimer := &components.Timer{Ratio: 3}
 
 	moria.Route(
 		dom.GetWindow().Document().QuerySelector("body"), "/",

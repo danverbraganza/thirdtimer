@@ -1,6 +1,7 @@
 package components
 
 import (
+	"strconv"
 	"sync"
 	"time"
 
@@ -19,14 +20,13 @@ var (
 	fps30 = time.Tick(time.Second / 30)
 )
 
-const RATIO = 3
-
 type Timer struct {
 	sync.Mutex
 	workingDuration, breakingDuration time.Duration
 	last                              time.Time
 	working                           bool
 	breaking                          bool
+	Ratio                             float64
 }
 
 func (t *Timer) Controller() moria.Controller {
@@ -61,7 +61,7 @@ func (t *Timer) StartBreak() {
 	t.last = time.Now()
 	t.working = false
 	t.breaking = true
-	t.breakingDuration += t.workingDuration / RATIO
+	t.breakingDuration += time.Duration(float64(t.workingDuration) / t.Ratio)
 	t.workingDuration = 0
 
 	go func() {
@@ -115,7 +115,7 @@ func (*Timer) View(ctrl moria.Controller) moria.View {
 					m("label.copy[for='timeEarned']", nil, s("Time earned this stint"))),
 				m("td.rightCell", nil,
 					m("input#timeEarned", js.M{
-						"value": timefuncs.FormatDuration(t.workingDuration / RATIO),
+						"value": timefuncs.FormatDuration(time.Duration(float64(t.workingDuration) / t.Ratio)),
 					}))),
 
 			m("tr", nil,
@@ -127,25 +127,53 @@ func (*Timer) View(ctrl moria.Controller) moria.View {
 						"style": maybeRed["style"],
 					}))),
 		),
-		m("button#startWork.control", js.M{
-			"config": mithril.RouteConfig,
-			"onclick": func() {
-				t.StartWork()
-			},
-		}, s("Start working")),
-		m("button#startBreak.control", js.M{
-			"config": mithril.RouteConfig,
-			"onclick": func() {
-				t.StartBreak()
-			},
-		},
-			s("Start Break")),
-		m("button#bigBreak.control", js.M{
-			"config": mithril.RouteConfig,
-			"onclick": func() {
-				t.BigBreak()
-			},
-		},
-			s("Big Break--reset all clocks")),
-	)
+		m("tr", nil,
+			m("td", nil, m("button#startWork.control", js.M{
+				"config": mithril.RouteConfig,
+				"onclick": func() {
+					t.StartWork()
+				},
+				"disabled": t.working,
+			}, s("Start working"))),
+
+			m("td", nil,
+				m("label[for='ratio']", nil,
+					s("Break Ratio")),
+				m("br", nil),
+				m("select#ratio.center", js.M{
+					"onchange": mithril.WithAttr("value", func(value string) {
+
+						ratio, err := strconv.Atoi(value)
+						if err == nil {
+							t.Ratio = float64(ratio)
+						} else {
+							print("Failed to parse value", value)
+						}
+
+					})},
+					m("option[value='1']", nil, s("1")),
+					m("option[value='2']", nil, s("2")),
+					m("option[value='3']", nil, s("3")),
+					m("option[value='4']", nil, s("4")),
+					m("option[value='5']", nil, s("5")),
+				)),
+			m("td", nil,
+				m("button#startBreak.control", js.M{
+					"config": mithril.RouteConfig,
+					"onclick": func() {
+						t.StartBreak()
+					},
+					"disabled": t.breaking,
+				},
+					s("Start Break")))),
+		m("tr", nil,
+			m("td[colspan=3]", nil,
+				m("button#bigBreak.button.center", js.M{
+					"config": mithril.RouteConfig,
+					"onclick": func() {
+						t.BigBreak()
+					},
+				},
+					s("Big Break--reset all clocks"))),
+		))
 }

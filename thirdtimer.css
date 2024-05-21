@@ -66,13 +66,21 @@ input[type=number]::-webkit-outer-spin-button {
     opacity: 1;
 }
 
-.chooser tr:nth-child(2n+1) {
-    background: #eee;
-}
 
 .control {
     font-size: larger;
     padding: 8px;
     margin: 12px;
     min-width: 200px;
+}
+
+.button {
+   font-size: larger;
+   padding: 8px;
+   min-width: 200px;
+}
+
+.center {
+    margin: auto;
+    display: block;
 }
